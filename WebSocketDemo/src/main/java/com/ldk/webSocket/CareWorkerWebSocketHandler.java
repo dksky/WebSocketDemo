@@ -53,7 +53,14 @@ public class CareWorkerWebSocketHandler extends TextWebSocketHandler{
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
     	System.err.println("connect to the websocket chat success......");
     	String userId = session.getAttributes().get("userId").toString();
-        sessions.put(userId, session);
+
+    	synchronized(sessions){
+    		WebSocketSession webSocketSession = sessions.get(userId);
+    		if(webSocketSession != null) {
+    			webSocketSession.close();
+    		}
+    		sessions.put(userId, session);
+    	}
         //处理离线消息
     }
     
